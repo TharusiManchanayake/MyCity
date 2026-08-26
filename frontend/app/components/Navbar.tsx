@@ -39,6 +39,7 @@ export default function Navbar() {
             {user.role === 'admin' && (
   <>
     <Link href="/admin/queue" style={{ fontSize: 13 }}>Admin queue</Link>
+    <Link href="/admin/analytics" style={{ fontSize: 13 }}>Analytics</Link>
     <Link href="/admin/announcements" style={{ fontSize: 13 }}>Post announcement</Link>
   </>
 )}

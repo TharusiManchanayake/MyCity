@@ -12,6 +12,7 @@ const WorkOrder = require('./models/WorkOrder');
 const workOrderRoutes = require('./routes/workorders');
 const Announcement = require('./models/Announcement');
 const announcementRoutes = require('./routes/announcements');
+const statsRoutes = require('./routes/stats');
 
 sequelize.sync({ alter: true })
   .then(() => console.log('Database synced — tables ready'))
@@ -24,6 +25,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/workorders', workOrderRoutes);
 app.use('/api/announcements', announcementRoutes);
+app.use('/api/stats', statsRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
