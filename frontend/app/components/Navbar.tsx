@@ -37,12 +37,15 @@ export default function Navbar() {
           <>
             <span style={{ fontSize: 13, color: '#666' }}>Hi, {user.name}</span>
             {user.role === 'admin' && (
-  <>
-    <Link href="/admin/queue" style={{ fontSize: 13 }}>Admin queue</Link>
-    <Link href="/admin/analytics" style={{ fontSize: 13 }}>Analytics</Link>
-    <Link href="/admin/announcements" style={{ fontSize: 13 }}>Post announcement</Link>
-  </>
-)}
+              <>
+                <Link href="/admin/queue" style={{ fontSize: 13 }}>Admin queue</Link>
+                <Link href="/admin/analytics" style={{ fontSize: 13 }}>Analytics</Link>
+                <Link href="/admin/announcements" style={{ fontSize: 13 }}>Post announcement</Link>
+              </>
+            )}
+            {user.role === 'technician' && (
+              <Link href="/technician" style={{ fontSize: 13 }}>My assignments</Link>
+            )}
             <button onClick={logout} style={{ fontSize: 13 }}>Log out</button>
           </>
         ) : (

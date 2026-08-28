@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { requireAdmin, requireAuth } = require('../middleware/auth');
+const { requireAdmin, requireAuth, requireAdminOrTechnician } = require('../middleware/auth');
 const WorkOrder = require('../models/WorkOrder');
 const Report = require('../models/Report');
+const Budget = require('../models/Budget');
 
 // Assign a report to a technician (admin only)
 router.post('/', requireAdmin, async (req, res) => {
@@ -53,6 +54,36 @@ router.get('/mine', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Error fetching technician work orders:', err);
     res.status(500).json({ error: 'Failed to fetch work orders' });
+  }
+});
+
+// Log the cost for a work order (updates budget spent automatically)
+router.patch('/:id/cost', requireAdminOrTechnician, async (req, res) => {
+  try {
+    const { cost } = req.body;
+    const workOrder = await WorkOrder.findByPk(req.params.id);
+
+    if (!workOrder) {
+      return res.status(404).json({ error: 'Work order not found' });
+    }
+
+    workOrder.cost = cost;
+    await workOrder.save();
+
+    const report = await Report.findByPk(workOrder.reportId);
+    if (report) {
+      const [budget] = await Budget.findOrCreate({
+        where: { category: report.category },
+        defaults: { allocated: 0 },
+      });
+      budget.spent = (budget.spent || 0) + Number(cost);
+      await budget.save();
+    }
+
+    res.json(workOrder);
+  } catch (err) {
+    console.error('Error logging cost:', err);
+    res.status(500).json({ error: 'Failed to log cost' });
   }
 });
 

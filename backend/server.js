@@ -15,6 +15,8 @@ const announcementRoutes = require('./routes/announcements');
 const statsRoutes = require('./routes/stats');
 const Asset = require('./models/Asset');
 const assetRoutes = require('./routes/assets');
+const Budget = require('./models/Budget');
+const budgetRoutes = require('./routes/budgets');
 
 sequelize.sync({ alter: true })
   .then(() => console.log('Database synced — tables ready'))
@@ -29,6 +31,8 @@ app.use('/api/workorders', workOrderRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/assets', assetRoutes);
+app.use('/api/budgets', budgetRoutes);
+
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });

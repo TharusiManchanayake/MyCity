@@ -6,6 +6,7 @@ const WorkOrder = sequelize.define('WorkOrder', {
   assignedToId: { type: DataTypes.INTEGER, allowNull: true },
   dueDate: { type: DataTypes.DATEONLY, allowNull: true },
   notes: { type: DataTypes.TEXT, allowNull: true },
+  cost: { type: DataTypes.FLOAT, allowNull: true },
 });
 
 module.exports = WorkOrder;

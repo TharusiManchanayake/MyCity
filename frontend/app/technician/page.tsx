@@ -41,10 +41,19 @@ export default function TechnicianPage() {
       .catch(() => setLoading(false));
   }, [router]);
 
-  const markFixed = async (reportId: number) => {
+  const markFixed = async (reportId: number, workOrderId: number) => {
+    const costInput = window.prompt('Enter the cost for this repair (LKR):');
+    if (costInput === null) return;
+
+    const cost = parseFloat(costInput);
+    if (isNaN(cost) || cost < 0) {
+      alert('Please enter a valid cost.');
+      return;
+    }
+
     const token = localStorage.getItem('token');
 
-    const res = await fetch(`http://localhost:5000/api/reports/${reportId}/status`, {
+    const statusRes = await fetch(`http://localhost:5000/api/reports/${reportId}/status`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -53,7 +62,16 @@ export default function TechnicianPage() {
       body: JSON.stringify({ status: 'fixed' }),
     });
 
-    if (res.ok) {
+    const costRes = await fetch(`http://localhost:5000/api/workorders/${workOrderId}/cost`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ cost }),
+    });
+
+    if (statusRes.ok && costRes.ok) {
       setWorkOrders((prev) =>
         prev.map((wo) =>
           wo.report.id === reportId ? { ...wo, report: { ...wo.report, status: 'fixed' } } : wo
@@ -82,7 +100,7 @@ export default function TechnicianPage() {
             <p style={{ fontSize: 13, color: '#666', margin: '0 0 4px' }}>{wo.report.category} · currently {wo.report.status}</p>
             <p style={{ fontSize: 13, margin: '0 0 8px' }}>{wo.report.description}</p>
             {wo.report.status !== 'fixed' ? (
-              <button onClick={() => markFixed(wo.report.id)}>Mark as fixed</button>
+              <button onClick={() => markFixed(wo.report.id, wo.workOrderId)}>Mark as fixed</button>
             ) : (
               <p style={{ fontSize: 13, color: 'green' }}>✓ Fixed</p>
             )}
