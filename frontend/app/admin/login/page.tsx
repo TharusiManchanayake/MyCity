@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function AdminLoginPage() {
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -27,14 +27,16 @@ export default function AdminLoginPage() {
         return;
       }
 
-      if (data.user.role !== 'admin') {
-        setError('This account does not have admin access.');
-        return;
-      }
-
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      router.push('/admin/queue');
+
+      if (data.user.role === 'admin') {
+        router.push('/admin/queue');
+      } else if (data.user.role === 'technician') {
+        router.push('/technician');
+      } else {
+        router.push('/reports');
+      }
     } catch (err) {
       setError('Something went wrong. Try again.');
     }
@@ -42,13 +44,19 @@ export default function AdminLoginPage() {
 
   return (
     <div style={{ maxWidth: 340, margin: '4rem auto', padding: '1.5rem', border: '1px solid #ddd', borderRadius: 10 }}>
-      <h2 style={{ textAlign: 'center' }}>Admin sign in</h2>
+      <h2 style={{ textAlign: 'center' }}>Sign in</h2>
+      <p style={{ fontSize: 13, color: '#666', textAlign: 'center', marginTop: -8, marginBottom: 16 }}>
+        For citizens, technicians, and city staff
+      </p>
       <form onSubmit={handleSubmit}>
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ display: 'block', width: '100%', marginBottom: 8 }} />
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ display: 'block', width: '100%', marginBottom: 8 }} />
         <button type="submit" style={{ width: '100%' }}>Sign in</button>
       </form>
       {error && <p style={{ color: 'red', fontSize: 13 }}>{error}</p>}
+      <p style={{ fontSize: 13, textAlign: 'center', marginTop: 12 }}>
+        New here? <a href="/signup">Create a citizen account</a>
+      </p>
     </div>
   );
 }

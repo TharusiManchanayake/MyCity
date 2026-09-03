@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 type User = {
   name: string;
@@ -12,11 +12,16 @@ type User = {
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
+
+  const syncUser = () => {
+    const stored = localStorage.getItem('user');
+    setUser(stored ? JSON.parse(stored) : null);
+  };
 
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) setUser(JSON.parse(stored));
-  }, []);
+    syncUser();
+  }, [pathname]);
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -25,27 +30,38 @@ export default function Navbar() {
     router.push('/');
   };
 
-  return (
-    <nav style={{ display: 'flex', gap: 16, padding: '12px 20px', borderBottom: '1px solid #ddd', alignItems: 'center' }}>
-      <Link href="/" style={{ fontWeight: 700 }}>MyCity</Link>
+  const citizenLinks = (
+    <>
       <Link href="/report">Report an issue</Link>
       <Link href="/reports">View reports</Link>
       <Link href="/announcements">Announcements</Link>
+    </>
+  );
+
+  return (
+    <nav style={{ display: 'flex', gap: 16, padding: '12px 20px', borderBottom: '1px solid #ddd', alignItems: 'center' }}>
+      <Link href="/" style={{ fontWeight: 700 }}>MyCity</Link>
+
+      {(!user || user.role === 'citizen') && citizenLinks}
+
+      {user?.role === 'admin' && (
+        <>
+          <Link href="/admin/queue">Admin queue</Link>
+          <Link href="/admin/analytics">Analytics</Link>
+          <Link href="/admin/announcements">Announcements</Link>
+          <Link href="/admin/assets">Assets</Link>
+          <Link href="/admin/budgets">Budgets</Link>
+        </>
+      )}
+
+      {user?.role === 'technician' && (
+        <Link href="/technician">My assignments</Link>
+      )}
 
       <div style={{ marginLeft: 'auto', display: 'flex', gap: 16, alignItems: 'center' }}>
         {user ? (
           <>
             <span style={{ fontSize: 13, color: '#666' }}>Hi, {user.name}</span>
-            {user.role === 'admin' && (
-              <>
-                <Link href="/admin/queue" style={{ fontSize: 13 }}>Admin queue</Link>
-                <Link href="/admin/analytics" style={{ fontSize: 13 }}>Analytics</Link>
-                <Link href="/admin/announcements" style={{ fontSize: 13 }}>Post announcement</Link>
-              </>
-            )}
-            {user.role === 'technician' && (
-              <Link href="/technician" style={{ fontSize: 13 }}>My assignments</Link>
-            )}
             <button onClick={logout} style={{ fontSize: 13 }}>Log out</button>
           </>
         ) : (
