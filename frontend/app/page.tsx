@@ -1,69 +1,155 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
+type Report = {
+  id: number;
+  status: string;
+  category: string;
+};
+
+export default function HomePage() {
+  const [reports, setReports] = useState<Report[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/reports')
+      .then((res) => res.json())
+      .then((data) => setReports(Array.isArray(data) ? data : []))
+      .catch(() => setReports([]));
+  }, []);
+
+  const total = reports.length;
+  const fixed = reports.filter((r) => r.status === 'fixed').length;
+  const resolutionRate = total > 0 ? Math.round((fixed / total) * 100) : 0;
+  const categories = new Set(reports.map((r) => r.category)).size;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div style={{ background: '#f6f8f2', minHeight: 'calc(100vh - 64px)' }}>
+      {/* Hero with photo background */}
+      <div
+        style={{
+          position: 'relative',
+          backgroundImage: 'url(/hero-city.jpeg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          padding: '96px 24px',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, rgba(15,45,25,0.75), rgba(15,45,25,0.6))',
+          }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+        <div style={{ position: 'relative', maxWidth: 640, margin: '0 auto', textAlign: 'left' }}>
+          <h1
+            style={{
+              fontSize: 44,
+              lineHeight: 1.1,
+              margin: '0 0 20px',
+              color: '#fff',
+              fontWeight: 800,
+            }}
+          >
+            Report it. Confirm it. Get it fixed.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p style={{ fontSize: 17, color: '#e7f0e5', maxWidth: 480, marginBottom: 28, lineHeight: 1.6 }}>
+            MyCity connects citizens with the people who keep your streets, lights,
+            and drains working. File a report in under a minute, and track it
+            through to resolution.
           </p>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <Link
+              href="/report"
+              style={{
+                background: '#fff',
+                color: '#1f5c2c',
+                padding: '12px 22px',
+                borderRadius: 6,
+                fontWeight: 700,
+                fontSize: 15,
+              }}
+            >
+              Report an issue
+            </Link>
+            <Link
+              href="/reports"
+              style={{
+                border: '1px solid #fff',
+                color: '#fff',
+                padding: '12px 22px',
+                borderRadius: 6,
+                fontWeight: 600,
+                fontSize: 15,
+              }}
+            >
+              View reports
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </div>
+
+      {/* Stats row */}
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          padding: '28px 24px',
+          borderBottom: '1px solid #dfe6da',
+          display: 'flex',
+          gap: 0,
+          flexWrap: 'wrap',
+        }}
+      >
+        {[
+          { label: 'Reports filed', value: total },
+          { label: 'Resolution rate', value: `${resolutionRate}%` },
+          { label: 'Issue categories tracked', value: categories },
+        ].map((stat, i) => (
+          <div
+            key={stat.label}
+            style={{
+              flex: '1 1 200px',
+              padding: '0 24px',
+              borderLeft: i === 0 ? 'none' : '1px solid #dfe6da',
+            }}
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <p style={{ fontSize: 32, fontWeight: 800, color: '#1f5c2c', margin: '0 0 4px' }}>{stat.value}</p>
+            <p style={{ fontSize: 14, color: '#5b6b5b', margin: 0 }}>{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* How it works */}
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '56px 24px' }}>
+        <h2 style={{ fontSize: 24, color: '#1f5c2c', marginBottom: 32, fontWeight: 700 }}>How MyCity works</h2>
+        <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
+          {[
+            { n: 1, title: 'Report', text: 'Add a photo, a short description, and pin the location on the map.' },
+            { n: 2, title: 'Confirm', text: 'Neighbors who\'ve seen the same issue confirm it, moving it toward verification.' },
+            { n: 3, title: 'Assign', text: 'City staff verify the report and assign it to a field technician.' },
+            { n: 4, title: 'Fixed', text: 'The technician resolves it and logs the cost against the ward budget.' },
+          ].map((step) => (
+            <div key={step.n} style={{ flex: '1 1 220px' }}>
+              <p style={{ fontSize: 13, color: '#6cb33f', fontWeight: 700, margin: '0 0 6px' }}>{step.n}</p>
+              <p style={{ fontWeight: 700, color: '#16231e', margin: '0 0 6px' }}>{step.title}</p>
+              <p style={{ fontSize: 14, color: '#5b6b5b', margin: 0, lineHeight: 1.5 }}>{step.text}</p>
+            </div>
+          ))}
         </div>
-      </main>
+      </div>
+
+      {/* Footer strip */}
+      <div style={{ background: '#2f7d3a', padding: '24px', textAlign: 'center' }}>
+        <p style={{ color: '#eaf5ea', fontSize: 14, margin: 0 }}>
+          Looking for office hours or a power-cut notice?{' '}
+          <Link href="/announcements" style={{ color: '#fff', fontWeight: 600 }}>
+            Check announcements
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
