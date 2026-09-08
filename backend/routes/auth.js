@@ -8,7 +8,7 @@ const { requireAdmin } = require('../middleware/auth');
 // Sign up (creates a user with a given role)
 router.post('/signup', async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, phone, wardId } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -16,6 +16,8 @@ router.post('/signup', async (req, res) => {
       email,
       password: hashedPassword,
       role: role || 'citizen',
+      phone: phone || null,
+      wardId: wardId || null,
     });
 
     res.status(201).json({ id: user.id, name: user.name, email: user.email, role: user.role });

@@ -50,7 +50,6 @@ export default function ReportPage() {
 
   return (
     <div style={{ background: '#fdfcf8', minHeight: 'calc(100vh - 64px)' }}>
-      {/* Page header banner */}
       <div
         style={{
           position: 'relative',
@@ -75,7 +74,6 @@ export default function ReportPage() {
         </div>
       </div>
 
-      {/* Form */}
       <div style={{ maxWidth: 500, margin: '0 auto', padding: '32px 24px' }}>
         <form
           onSubmit={handleSubmit}
