@@ -10,7 +10,7 @@ type User = {
   role: string;
 };
 
-const linkStyle = { color: '#eaf5ea' };
+const linkStyle = { color: '#2b2b2b', fontSize: 14, fontWeight: 500 };
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
@@ -38,6 +38,7 @@ export default function Navbar() {
       <Link href="/report" style={linkStyle}>Report an issue</Link>
       <Link href="/reports" style={linkStyle}>View reports</Link>
       <Link href="/announcements" style={linkStyle}>Announcements</Link>
+      <Link href="/council-info" style={linkStyle}>Council info</Link>
     </>
   );
 
@@ -46,15 +47,16 @@ export default function Navbar() {
       style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '8px 20px',
-        background: '#2f7d3a',
+        padding: '6px 24px',
+        background: '#ffffff',
+        borderBottom: '1px solid #dcdad5',
       }}
     >
-     <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
-  <Image src="/mycity-badge.png" alt="MyCity" width={190} height={125} style={{ height: 48, width: 'auto' }} />
-</Link>
+      <Link href="/" style={{ display: 'flex', alignItems: 'center', paddingRight: 20 }}>
+        <Image src="/mycity-badge4.png" alt="MyCity" width={210} height={280} style={{ height: 56, width: 'auto' }} />
+      </Link>
 
-      <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.3)', margin: '0 20px' }} />
+      <div style={{ width: 1, height: 32, background: '#dcdad5', marginRight: 24 }} />
 
       <div style={{ display: 'flex', gap: 20 }}>
         {(!user || user.role === 'citizen') && citizenLinks}
@@ -77,10 +79,10 @@ export default function Navbar() {
       <div style={{ marginLeft: 'auto', display: 'flex', gap: 16, alignItems: 'center' }}>
         {user ? (
           <>
-            <span style={{ fontSize: 13, color: '#d7ecd6' }}>Hi, {user.name}</span>
+            <span style={{ fontSize: 13, color: '#6e6e6e' }}>Hi, {user.name}</span>
             <button
               onClick={logout}
-              style={{ fontSize: 13, background: 'transparent', color: '#fff', border: '1px solid #fff', borderRadius: 4, padding: '4px 10px' }}
+              style={{ fontSize: 13, background: 'transparent', color: '#2b2b2b', border: '1px solid #dcdad5', borderRadius: 6, padding: '5px 10px' }}
             >
               Log out
             </button>
@@ -90,7 +92,7 @@ export default function Navbar() {
             <Link href="/login" style={linkStyle}>Sign in</Link>
             <Link
               href="/signup"
-              style={{ fontSize: 13, background: '#fff', color: '#2f7d3a', borderRadius: 4, padding: '4px 10px', fontWeight: 600 }}
+              style={{ fontSize: 13, background: 'linear-gradient(90deg, #e6b800, #d4a017)', color: '#2b2b2b', borderRadius: 6, padding: '6px 12px', fontWeight: 700 }}
             >
               Sign up
             </Link>
