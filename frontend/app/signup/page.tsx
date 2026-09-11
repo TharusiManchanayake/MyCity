@@ -65,53 +65,53 @@ export default function SignupPage() {
   };
 
   return (
-    <div style={{ background: '#fdfcf8', minHeight: 'calc(100vh - 64px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <div style={{ maxWidth: 380, width: '100%', background: '#fff', borderRadius: 10, padding: '36px 32px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
-        <h2 style={{ textAlign: 'center', color: '#1f5c2c', fontSize: 24, margin: '0 0 6px' }}>Create an account</h2>
-        <p style={{ fontSize: 13, color: '#5b6b5b', textAlign: 'center', marginTop: 0, marginBottom: 24 }}>
+    <div style={{ background: '#fbfbfa', minHeight: 'calc(100vh - 64px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div style={{ maxWidth: 380, width: '100%', background: '#fff', borderRadius: 10, padding: '36px 32px', border: '1px solid #dcdad5' }}>
+        <h2 style={{ textAlign: 'center', color: '#2b2b2b', fontSize: 24, fontWeight: 700, margin: '0 0 6px' }}>Create an account</h2>
+        <p style={{ fontSize: 13, color: '#6e6e6e', textAlign: 'center', marginTop: 0, marginBottom: 24 }}>
           Sign up to report issues and confirm reports from your neighbors
         </p>
         <form onSubmit={handleSubmit}>
-          <label style={{ fontSize: 13, color: '#3d4a3d', fontWeight: 600 }}>Name</label>
+          <label style={{ fontSize: 13, color: '#3d3d3d', fontWeight: 600 }}>Name</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 14, padding: '10px 12px', border: '1px solid #d7ddd2', borderRadius: 6, fontSize: 14 }}
+            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 14, padding: '10px 12px', border: '1px solid #dcdad5', borderRadius: 6, fontSize: 14 }}
           />
 
-          <label style={{ fontSize: 13, color: '#3d4a3d', fontWeight: 600 }}>Email</label>
+          <label style={{ fontSize: 13, color: '#3d3d3d', fontWeight: 600 }}>Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 14, padding: '10px 12px', border: '1px solid #d7ddd2', borderRadius: 6, fontSize: 14 }}
+            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 14, padding: '10px 12px', border: '1px solid #dcdad5', borderRadius: 6, fontSize: 14 }}
           />
 
-          <label style={{ fontSize: 13, color: '#3d4a3d', fontWeight: 600 }}>Password</label>
+          <label style={{ fontSize: 13, color: '#3d3d3d', fontWeight: 600 }}>Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 14, padding: '10px 12px', border: '1px solid #d7ddd2', borderRadius: 6, fontSize: 14 }}
+            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 14, padding: '10px 12px', border: '1px solid #dcdad5', borderRadius: 6, fontSize: 14 }}
           />
 
-          <label style={{ fontSize: 13, color: '#3d4a3d', fontWeight: 600 }}>Phone (optional)</label>
+          <label style={{ fontSize: 13, color: '#3d3d3d', fontWeight: 600 }}>Phone (optional)</label>
           <input
             type="tel"
             placeholder="e.g. 0771234567"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 14, padding: '10px 12px', border: '1px solid #d7ddd2', borderRadius: 6, fontSize: 14 }}
+            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 14, padding: '10px 12px', border: '1px solid #dcdad5', borderRadius: 6, fontSize: 14 }}
           />
 
-          <label style={{ fontSize: 13, color: '#3d4a3d', fontWeight: 600 }}>Ward (optional)</label>
+          <label style={{ fontSize: 13, color: '#3d3d3d', fontWeight: 600 }}>Ward (optional)</label>
           <select
             value={wardId}
             onChange={(e) => setWardId(e.target.value)}
-            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 20, padding: '10px 12px', border: '1px solid #d7ddd2', borderRadius: 6, fontSize: 14 }}
+            style={{ display: 'block', width: '100%', marginTop: 6, marginBottom: 20, padding: '10px 12px', border: '1px solid #dcdad5', borderRadius: 6, fontSize: 14 }}
           >
             <option value="">Select your ward</option>
             {wards.map((w) => (
@@ -121,7 +121,7 @@ export default function SignupPage() {
 
           <button
             type="submit"
-            style={{ width: '100%', background: '#2f7d3a', color: '#fff', border: 'none', padding: '12px', borderRadius: 6, fontWeight: 600, fontSize: 15, cursor: 'pointer' }}
+            style={{ width: '100%', background: 'linear-gradient(90deg, #e6b800, #d4a017)', color: '#2b2b2b', border: 'none', padding: '12px', borderRadius: 6, fontWeight: 700, fontSize: 15, cursor: 'pointer' }}
           >
             Sign up
           </button>
