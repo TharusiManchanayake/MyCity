@@ -12,6 +12,7 @@ type InfoItem = {
 export default function CouncilInfoPage() {
   const [items, setItems] = useState<InfoItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:5000/api/info-items')
@@ -25,18 +26,48 @@ export default function CouncilInfoPage() {
 
   if (loading) return <p style={{ padding: '2rem', color: '#6e6e6e' }}>Loading...</p>;
 
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? items.filter(
+        (item) =>
+          item.title.toLowerCase().includes(q) ||
+          item.details.toLowerCase().includes(q) ||
+          (item.category || '').toLowerCase().includes(q)
+      )
+    : items;
+
   return (
     <div style={{ background: '#fbfbfa', minHeight: 'calc(100vh - 64px)' }}>
       <div style={{ maxWidth: 700, margin: '0 auto', padding: '48px 24px' }}>
         <h1 style={{ color: '#2b2b2b', fontSize: 30, fontWeight: 800, margin: '0 0 6px' }}>Council info</h1>
-        <p style={{ color: '#6e6e6e', fontSize: 15, marginBottom: 28 }}>
+        <p style={{ color: '#6e6e6e', fontSize: 15, marginBottom: 20 }}>
           Office hours, contact details, and other useful information from your city council.
         </p>
 
+        <input
+          type="text"
+          placeholder="Search council info…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{
+            display: 'block',
+            width: '100%',
+            marginBottom: 24,
+            padding: '11px 14px',
+            border: '1px solid #dcdad5',
+            borderRadius: 8,
+            fontSize: 14,
+            background: '#fff',
+          }}
+        />
+
         {items.length === 0 && <p style={{ fontSize: 14, color: '#9a9a9a' }}>No information published yet.</p>}
+        {items.length > 0 && filtered.length === 0 && (
+          <p style={{ fontSize: 14, color: '#9a9a9a' }}>No results for "{query}".</p>
+        )}
 
         <div style={{ display: 'grid', gap: 12 }}>
-          {items.map((item) => (
+          {filtered.map((item) => (
             <div key={item.id} style={{ background: '#fff', border: '1px solid #dcdad5', borderRadius: 10, padding: 20 }}>
               {item.category && (
                 <span
