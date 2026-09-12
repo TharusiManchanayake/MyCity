@@ -22,7 +22,7 @@ type Report = {
 
 export default function ReportsMap({ reports }: { reports: Report[] }) {
   return (
-    <MapContainer center={[6.9271, 79.8612]} zoom={12} style={{ height: '300px', width: '100%' }}>
+    <MapContainer key={reports.length} center={[6.9271, 79.8612]} zoom={12} style={{ height: '300px', width: '100%' }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {reports.map((r) => (
         <Marker key={r.id} position={[r.latitude, r.longitude]}>

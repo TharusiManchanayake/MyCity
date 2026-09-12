@@ -3,40 +3,28 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-type Schedule = {
+type InfoItem = {
   id: number;
-  officerName: string;
   title: string;
-  meetingDay: string;
-  timeSlot: string | null;
-  notes: string | null;
+  details: string;
+  category: string | null;
 };
 
 export default function AdminCouncilInfoPage() {
-  const [officeHours, setOfficeHours] = useState('');
-  const [address, setAddress] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [officerName, setOfficerName] = useState('');
+  const [items, setItems] = useState<InfoItem[]>([]);
   const [title, setTitle] = useState('');
-  const [meetingDay, setMeetingDay] = useState('');
-  const [timeSlot, setTimeSlot] = useState('');
+  const [details, setDetails] = useState('');
+  const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const loadAll = () => {
-    Promise.all([
-      fetch('http://localhost:5000/api/council-info').then((r) => r.json()),
-      fetch('http://localhost:5000/api/officer-schedule').then((r) => r.json()),
-    ]).then(([info, sched]) => {
-      setOfficeHours(info.officeHours || '');
-      setAddress(info.address || '');
-      setPhone(info.phone || '');
-      setEmail(info.email || '');
-      setSchedules(sched);
-      setLoading(false);
-    });
+  const loadItems = () => {
+    fetch('http://localhost:5000/api/info-items')
+      .then((res) => res.json())
+      .then((data) => {
+        setItems(Array.isArray(data) ? data : []);
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -45,84 +33,106 @@ export default function AdminCouncilInfoPage() {
       router.push('/login');
       return;
     }
-    loadAll();
+    loadItems();
   }, [router]);
 
-  const saveInfo = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:5000/api/council-info', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ officeHours, address, phone, email }),
-    });
-    if (res.ok) alert('Council info updated');
-  };
-
-  const addSchedule = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:5000/api/officer-schedule', {
+    const res = await fetch('http://localhost:5000/api/info-items', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ officerName, title, meetingDay, timeSlot }),
+      body: JSON.stringify({ title, details, category: category || null }),
     });
+
     if (res.ok) {
-      setOfficerName('');
       setTitle('');
-      setMeetingDay('');
-      setTimeSlot('');
-      loadAll();
+      setDetails('');
+      setCategory('');
+      loadItems();
+    } else {
+      alert('Failed to add info item');
     }
   };
 
-  const deleteSchedule = async (id: number) => {
+  const handleDelete = async (id: number) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/officer-schedule/${id}`, {
+    const res = await fetch(`http://localhost:5000/api/info-items/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
-    if (res.ok) loadAll();
+    if (res.ok) loadItems();
   };
 
-  if (loading) return <p style={{ padding: '2rem' }}>Loading...</p>;
+  if (loading) return <p style={{ padding: '2rem', color: '#6e6e6e' }}>Loading...</p>;
+
+  const inputStyle = { display: 'block', width: '100%', marginBottom: 12, padding: '10px 12px', border: '1px solid #dcdad5', borderRadius: 6, fontSize: 14 };
 
   return (
-    <div style={{ maxWidth: 500, margin: '2rem auto', padding: '1rem' }}>
-      <h1>Council info</h1>
+    <div style={{ background: '#fbfbfa', minHeight: 'calc(100vh - 64px)' }}>
+      <div style={{ maxWidth: 560, margin: '0 auto', padding: '40px 24px' }}>
+        <h1 style={{ color: '#2b2b2b', fontSize: 28, fontWeight: 700, margin: '0 0 4px' }}>Council info</h1>
+        <p style={{ color: '#6e6e6e', fontSize: 14, margin: '0 0 24px' }}>
+          Publish any reference information for citizens — office hours, staff working hours, contact details, or anything else.
+        </p>
 
-      <form onSubmit={saveInfo} style={{ marginBottom: 24, border: '1px solid #ddd', borderRadius: 8, padding: 12 }}>
-        <p style={{ fontWeight: 600, marginBottom: 8 }}>General info</p>
-        <input placeholder="Office hours (e.g. Mon-Fri, 9 AM - 4 PM)" value={officeHours} onChange={(e) => setOfficeHours(e.target.value)} style={{ display: 'block', width: '100%', marginBottom: 8 }} />
-        <input placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} style={{ display: 'block', width: '100%', marginBottom: 8 }} />
-        <input placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} style={{ display: 'block', width: '100%', marginBottom: 8 }} />
-        <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ display: 'block', width: '100%', marginBottom: 8 }} />
-        <button type="submit">Save info</button>
-      </form>
+        <form onSubmit={handleSubmit} style={{ marginBottom: 28, background: '#fff', border: '1px solid #dcdad5', borderRadius: 10, padding: 20 }}>
+          <label style={{ fontSize: 13, fontWeight: 600, color: '#3d3d3d' }}>Title</label>
+          <input
+            placeholder="e.g. Town Council Opening Hours"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            style={inputStyle}
+          />
 
-      <form onSubmit={addSchedule} style={{ marginBottom: 24, border: '1px solid #ddd', borderRadius: 8, padding: 12 }}>
-        <p style={{ fontWeight: 600, marginBottom: 8 }}>Add officer meeting schedule</p>
-        <input placeholder="Officer name" value={officerName} onChange={(e) => setOfficerName(e.target.value)} required style={{ display: 'block', width: '100%', marginBottom: 8 }} />
-        <input placeholder="Title (e.g. Ward Officer)" value={title} onChange={(e) => setTitle(e.target.value)} required style={{ display: 'block', width: '100%', marginBottom: 8 }} />
-        <input placeholder="Meeting day (e.g. Wednesdays)" value={meetingDay} onChange={(e) => setMeetingDay(e.target.value)} required style={{ display: 'block', width: '100%', marginBottom: 8 }} />
-        <input placeholder="Time slot (e.g. 10 AM - 12 PM)" value={timeSlot} onChange={(e) => setTimeSlot(e.target.value)} style={{ display: 'block', width: '100%', marginBottom: 8 }} />
-        <button type="submit">Add schedule entry</button>
-      </form>
+          <label style={{ fontSize: 13, fontWeight: 600, color: '#3d3d3d' }}>Details</label>
+          <textarea
+            placeholder="e.g. Monday to Friday, 9:00 AM - 4:00 PM"
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            required
+            style={{ ...inputStyle, minHeight: 80 }}
+          />
 
-      <div style={{ display: 'grid', gap: 12 }}>
-        {schedules.map((s) => (
-          <div key={s.id} style={{ border: '1px solid #ddd', borderRadius: 8, padding: 12 }}>
-            <p style={{ fontWeight: 600, margin: '0 0 4px' }}>{s.officerName} — {s.title}</p>
-            <p style={{ fontSize: 13, color: '#666', margin: '0 0 8px' }}>{s.meetingDay}{s.timeSlot && `, ${s.timeSlot}`}</p>
-            <button onClick={() => deleteSchedule(s.id)}>Delete</button>
-          </div>
-        ))}
+          <label style={{ fontSize: 13, fontWeight: 600, color: '#3d3d3d' }}>Label (optional)</label>
+          <input
+            placeholder="e.g. Office Hours, Contact, Staff"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            style={inputStyle}
+          />
+
+          <button
+            type="submit"
+            style={{ width: '100%', background: 'linear-gradient(90deg, #e6b800, #d4a017)', color: '#2b2b2b', border: 'none', padding: '12px', borderRadius: 6, fontWeight: 700, fontSize: 15, cursor: 'pointer' }}
+          >
+            Add info item
+          </button>
+        </form>
+
+        <div style={{ display: 'grid', gap: 12 }}>
+          {items.map((item) => (
+            <div key={item.id} style={{ background: '#fff', border: '1px solid #dcdad5', borderRadius: 10, padding: 16 }}>
+              {item.category && (
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#d4a017', letterSpacing: 0.4 }}>
+                  {item.category}
+                </span>
+              )}
+              <p style={{ fontWeight: 700, color: '#2b2b2b', margin: '6px 0 6px', fontSize: 16 }}>{item.title}</p>
+              <p style={{ fontSize: 14, color: '#3d3d3d', margin: '0 0 12px', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{item.details}</p>
+              <button
+                onClick={() => handleDelete(item.id)}
+                style={{ fontSize: 12, background: 'transparent', border: '1px solid #dcdad5', color: '#6e6e6e', borderRadius: 6, padding: '5px 12px', cursor: 'pointer' }}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

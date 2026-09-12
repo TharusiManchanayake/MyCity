@@ -68,6 +68,7 @@ export default function Navbar() {
             <Link href="/admin/announcements" style={linkStyle}>Announcements</Link>
             <Link href="/admin/assets" style={linkStyle}>Assets</Link>
             <Link href="/admin/budgets" style={linkStyle}>Budgets</Link>
+            <Link href="/admin/council-info" style={linkStyle}>Council info</Link>
           </>
         )}
 

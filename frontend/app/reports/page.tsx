@@ -20,10 +20,24 @@ type Report = {
 const categories = ['all', 'streetlight', 'garbage', 'road', 'water'];
 
 const statusColor: Record<string, string> = {
-  reported: '#8a8a70',
-  verified: '#b8862e',
+  reported: '#9a9a9a',
+  verified: '#d4a017',
   in_progress: '#2f6fa8',
-  fixed: '#2f7d3a',
+  fixed: '#5c7a5c',
+};
+
+const statusBg: Record<string, string> = {
+  reported: '#f0efec',
+  verified: '#fbf1d9',
+  in_progress: '#e2ecf5',
+  fixed: '#e6efe6',
+};
+
+const categoryIcon: Record<string, string> = {
+  streetlight: '💡',
+  garbage: '🗑️',
+  road: '🛣️',
+  water: '💧',
 };
 
 export default function ReportsPage() {
@@ -69,36 +83,20 @@ export default function ReportsPage() {
     loadReports();
   };
 
-  if (loading) return <p style={{ padding: '2rem' }}>Loading reports...</p>;
+  if (loading) return <p style={{ padding: '2rem', color: '#6e6e6e' }}>Loading reports...</p>;
 
   const filtered = filter === 'all' ? reports : reports.filter((r) => r.category === filter);
 
   return (
-    <div style={{ background: '#fdfcf8', minHeight: 'calc(100vh - 64px)' }}>
+    <div style={{ background: '#fbfbfa', minHeight: 'calc(100vh - 64px)' }}>
       <style>{`
-        .filter-pill:hover { background: #eef3ea; }
+        .filter-pill:hover { background: #f0efec; }
       `}</style>
 
-      {/* Header banner */}
-      <div
-        style={{
-          position: 'relative',
-          backgroundImage: 'url(/hero-city.jpeg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          padding: '48px 24px',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(120deg, rgba(253,252,248,0.92), rgba(253,252,248,0.55))',
-          }}
-        />
-        <div style={{ position: 'relative', maxWidth: 700, margin: '0 auto' }}>
-          <h1 style={{ color: '#1f5c2c', fontSize: 30, fontWeight: 800, margin: '0 0 6px' }}>All reports</h1>
-          <p style={{ color: '#3d4a3d', fontSize: 15, margin: 0 }}>
+      <div style={{ padding: '48px 24px 0' }}>
+        <div style={{ maxWidth: 700, margin: '0 auto' }}>
+          <h1 style={{ color: '#2b2b2b', fontSize: 30, fontWeight: 800, margin: '0 0 6px' }}>All reports</h1>
+          <p style={{ color: '#6e6e6e', fontSize: 15, margin: 0 }}>
             Browse what's been reported across the city, and confirm issues you've seen too.
           </p>
         </div>
@@ -114,9 +112,9 @@ export default function ReportsPage() {
               style={{
                 padding: '7px 16px',
                 borderRadius: 999,
-                border: filter === c ? 'none' : '1px solid #d7ddd2',
-                background: filter === c ? '#2f7d3a' : '#fff',
-                color: filter === c ? '#fff' : '#3d4a3d',
+                border: filter === c ? 'none' : '1px solid #dcdad5',
+                background: filter === c ? '#d4a017' : '#fff',
+                color: filter === c ? '#2b2b2b' : '#3d3d3d',
                 textTransform: 'capitalize',
                 fontSize: 13,
                 fontWeight: 600,
@@ -129,40 +127,55 @@ export default function ReportsPage() {
           ))}
         </div>
 
-        <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid #e6e2d6' }}>
+        <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid #dcdad5' }}>
           <ReportsMap reports={filtered} />
         </div>
 
         <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
-          {filtered.length === 0 && <p style={{ color: '#5b6b5b' }}>No reports in this category yet.</p>}
+          {filtered.length === 0 && <p style={{ color: '#9a9a9a' }}>No reports in this category yet.</p>}
           {filtered.map((r) => (
-            <div key={r.id} style={{ background: '#fff', border: '1px solid #e6e2d6', borderRadius: 10, padding: 14 }}>
+            <div key={r.id} style={{ background: '#fff', border: '1px solid #dcdad5', borderRadius: 10, padding: 16 }}>
               {r.photoUrl && (
-                <img src={r.photoUrl} alt={r.title} style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 6, marginBottom: 10 }} />
+                <img src={r.photoUrl} alt={r.title} style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 6, marginBottom: 12 }} />
               )}
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  color: statusColor[r.status] || '#5b6b5b',
-                  letterSpacing: 0.4,
-                }}
-              >
-                {r.status.replace('_', ' ')}
-              </span>
-              <p style={{ fontWeight: 700, color: '#16231e', margin: '6px 0 4px' }}>{r.title}</p>
-              <p style={{ fontSize: 13, color: '#5b6b5b', margin: '0 0 8px', textTransform: 'capitalize' }}>
-                {r.category} · {r.confirmCount} {r.confirmCount === 1 ? 'confirmation' : 'confirmations'}
-              </p>
-              <p style={{ fontSize: 13, color: '#3d4a3d', margin: '0 0 10px' }}>{r.description}</p>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
+                <p style={{ fontWeight: 700, color: '#2b2b2b', margin: 0, fontSize: 16 }}>{r.title}</p>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    color: statusColor[r.status] || '#6e6e6e',
+                    background: statusBg[r.status] || '#f0efec',
+                    letterSpacing: 0.4,
+                    padding: '4px 10px',
+                    borderRadius: 999,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {r.status.replace('_', ' ')}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 12, color: '#3d3d3d', background: '#f0efec', padding: '4px 10px', borderRadius: 999, textTransform: 'capitalize' }}>
+                  {categoryIcon[r.category] || '📍'} {r.category}
+                </span>
+                <span style={{ fontSize: 12, color: '#3d3d3d', background: '#f0efec', padding: '4px 10px', borderRadius: 999 }}>
+                  👍 {r.confirmCount} {r.confirmCount === 1 ? 'confirmation' : 'confirmations'}
+                </span>
+              </div>
+
+              <p style={{ fontSize: 13, color: '#3d3d3d', margin: '0 0 12px', lineHeight: 1.5 }}>{r.description}</p>
+
               <button
                 onClick={() => handleConfirm(r.id)}
-                style={{ fontSize: 13, fontWeight: 600, background: 'transparent', color: '#2f7d3a', border: '1px solid #2f7d3a', borderRadius: 6, padding: '6px 14px', cursor: 'pointer' }}
+                style={{ fontSize: 13, fontWeight: 600, background: 'transparent', color: '#d4a017', border: '1px solid #d4a017', borderRadius: 6, padding: '6px 14px', cursor: 'pointer' }}
               >
                 Confirm this issue
               </button>
-              {confirmMsg[r.id] && <p style={{ fontSize: 12, color: '#5b6b5b', marginTop: 6 }}>{confirmMsg[r.id]}</p>}
+              {confirmMsg[r.id] && <p style={{ fontSize: 12, color: '#6e6e6e', marginTop: 6 }}>{confirmMsg[r.id]}</p>}
             </div>
           ))}
         </div>

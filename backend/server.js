@@ -22,6 +22,8 @@ const CouncilInfo = require('./models/CouncilInfo');
 const OfficerSchedule = require('./models/OfficerSchedule');
 const councilInfoRoutes = require('./routes/councilinfo');
 const officerScheduleRoutes = require('./routes/officerschedule');
+const InfoItem = require('./models/InfoItem');
+const infoItemRoutes = require('./routes/infoitems');
 
 sequelize.sync({ alter: true })
   .then(() => console.log('Database synced — tables ready'))
@@ -40,6 +42,9 @@ app.use('/api/budgets', budgetRoutes);
 app.use('/api/wards', wardRoutes);
 app.use('/api/council-info', councilInfoRoutes);
 app.use('/api/officer-schedule', officerScheduleRoutes);
+app.use('/api/info-items', infoItemRoutes);
+
+
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
