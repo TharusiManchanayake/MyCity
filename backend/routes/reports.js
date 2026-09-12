@@ -113,4 +113,24 @@ router.post('/:id/confirm', requireAuth, async (req, res) => {
   }
 });
 
+// Update a report's category (admin only)
+router.patch('/:id/category', requireAdmin, async (req, res) => {
+  try {
+    const { category } = req.body;
+    const report = await Report.findByPk(req.params.id);
+
+    if (!report) {
+      return res.status(404).json({ error: 'Report not found' });
+    }
+
+    report.category = category;
+    await report.save();
+
+    res.json(report);
+  } catch (err) {
+    console.error('Error updating category:', err);
+    res.status(500).json({ error: 'Failed to update category' });
+  }
+});
+
 module.exports = router;
