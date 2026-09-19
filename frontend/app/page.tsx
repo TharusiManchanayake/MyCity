@@ -13,27 +13,27 @@ type Report = {
 
 const stepIcons: Record<string, React.ReactElement> = {
   camera: (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d4a017" strokeWidth="1.75">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.75">
       <rect x="3" y="7" width="18" height="13" rx="2" />
       <path d="M8 7l1.5-2.5h5L16 7" />
       <circle cx="12" cy="13.5" r="3.2" />
     </svg>
   ),
   check: (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d4a017" strokeWidth="1.75">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.75">
       <circle cx="12" cy="12" r="9" />
       <path d="M8 12.5l2.5 2.5L16 9.5" />
     </svg>
   ),
   clipboard: (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d4a017" strokeWidth="1.75">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.75">
       <rect x="6" y="4" width="12" height="17" rx="1.5" />
       <path d="M9 4V3a1 1 0 011-1h4a1 1 0 011 1v1" />
       <path d="M9 11h6M9 15h6" />
     </svg>
   ),
   wrench: (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d4a017" strokeWidth="1.75">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.75">
       <path d="M14.7 6.3a4 4 0 00-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 005.4-5.4l-2.3 2.3-2-2 2.3-2.3z" />
     </svg>
   ),
@@ -57,16 +57,16 @@ export default function HomePage() {
 
   const statusColor: Record<string, string> = {
     reported: '#9a9a9a',
-    verified: '#d4a017',
+    verified: '#22c55e',
     in_progress: '#6e6e6e',
-    fixed: '#5c7a5c',
+    fixed: '#15803d',
   };
 
   return (
-    <div style={{ background: '#fbfbfa', minHeight: 'calc(100vh - 64px)' }}>
+    <div style={{ background: '#fbfffc', minHeight: 'calc(100vh - 64px)' }}>
       <style>{`
-        .cta-primary:hover { box-shadow: 0 4px 14px rgba(212,160,23,0.35); }
-        .cta-secondary:hover { background: #f0efec; border-color: #9a9a9a !important; }
+        .cta-primary:hover { box-shadow: 0 4px 14px rgba(34,197,94,0.4); }
+        .cta-secondary:hover { background: #e7fbec; border-color: #9a9a9a !important; }
         .report-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-color: #c7c5c0 !important; }
       `}</style>
 
@@ -87,17 +87,17 @@ export default function HomePage() {
             Report it. Confirm it. Get it fixed.
           </h1>
           <p style={{ fontSize: 16, color: '#6e6e6e', maxWidth: 480, marginBottom: 30, lineHeight: 1.6 }}>
-            MyCity connects citizens with the people who keep your streets, lights,
-            and drains working. File a report in under a minute, and track it
-            through to resolution.
+            MyCity connects citizens with the people who keep your streets,
+            lights, and drains working. File a report in under a minute, and
+            track it through to resolution.
           </p>
           <div style={{ display: 'flex', gap: 12 }}>
             <Link
               href="/report"
               className="cta-primary"
               style={{
-                background: 'linear-gradient(90deg, #e6b800, #d4a017)',
-                color: '#2b2b2b',
+                background: 'linear-gradient(90deg, #4ade80, #22c55e)',
+                color: '#ffffff',
                 padding: '11px 22px',
                 borderRadius: 6,
                 fontWeight: 700,
@@ -128,7 +128,7 @@ export default function HomePage() {
       </div>
 
       {/* Stats band */}
-      <div style={{ background: '#f0efec', borderTop: '1px solid #dcdad5', borderBottom: '1px solid #dcdad5', padding: '32px 24px' }}>
+      <div style={{ background: '#e7fbec', borderTop: '1px solid #bdf0ca', borderBottom: '1px solid #bdf0ca', padding: '32px 24px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', flexWrap: 'wrap' }}>
           {[
             { label: 'Reports filed', value: total },
@@ -140,10 +140,10 @@ export default function HomePage() {
               style={{
                 flex: '1 1 200px',
                 padding: '0 24px',
-                borderLeft: i === 0 ? 'none' : '1px solid #dcdad5',
+                borderLeft: i === 0 ? 'none' : '1px solid #bdf0ca',
               }}
             >
-              <p style={{ fontSize: 32, fontWeight: 700, color: '#d4a017', margin: '0 0 4px' }}>{stat.value}</p>
+              <p style={{ fontSize: 32, fontWeight: 700, color: '#16a34a', margin: '0 0 4px' }}>{stat.value}</p>
               <p style={{ fontSize: 14, color: '#6e6e6e', margin: 0 }}>{stat.label}</p>
             </div>
           ))}
@@ -176,7 +176,7 @@ export default function HomePage() {
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '16px 24px 64px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24 }}>
             <h2 style={{ fontSize: 24, color: '#2b2b2b', fontWeight: 700, margin: 0 }}>Recent reports</h2>
-            <Link href="/reports" style={{ color: '#d4a017', fontWeight: 600, fontSize: 14 }}>
+            <Link href="/reports" style={{ color: '#16a34a', fontWeight: 600, fontSize: 14 }}>
               View all →
             </Link>
           </div>
@@ -198,7 +198,7 @@ export default function HomePage() {
                 {r.photoUrl ? (
                   <img src={r.photoUrl} alt={r.title} style={{ width: '100%', height: 150, objectFit: 'cover' }} />
                 ) : (
-                  <div style={{ width: '100%', height: 150, background: '#f0efec' }} />
+                  <div style={{ width: '100%', height: 150, background: '#e7fbec' }} />
                 )}
                 <div style={{ padding: 14 }}>
                   <span
@@ -222,18 +222,18 @@ export default function HomePage() {
       )}
 
       {/* Footer strip */}
-      <div style={{ background: '#f0efec', borderTop: '1px solid #dcdad5', padding: '24px', textAlign: 'center' }}>
-  <p style={{ color: '#6e6e6e', fontSize: 14, margin: 0 }}>
-    Looking for office hours?{' '}
-    <Link href="/council-info" style={{ color: '#d4a017', fontWeight: 600 }}>
-      Check council info
-    </Link>
-    {' '}·{' '}
-    <Link href="/announcements" style={{ color: '#d4a017', fontWeight: 600 }}>
-      View announcements
-    </Link>
-  </p>
-</div>
+      <div style={{ background: '#e7fbec', borderTop: '1px solid #bdf0ca', padding: '24px', textAlign: 'center' }}>
+        <p style={{ color: '#6e6e6e', fontSize: 14, margin: 0 }}>
+          Looking for office hours?{' '}
+          <Link href="/council-info" style={{ color: '#16a34a', fontWeight: 600 }}>
+            Check council info
+          </Link>
+          {' '}·{' '}
+          <Link href="/announcements" style={{ color: '#16a34a', fontWeight: 600 }}>
+            View announcements
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
