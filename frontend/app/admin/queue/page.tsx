@@ -20,19 +20,27 @@ type Technician = {
 
 const statusColor: Record<string, string> = {
   reported: '#9a9a9a',
-  verified: '#d4a017',
+  verified: '#16a34a',
   in_progress: '#2f6fa8',
-  fixed: '#5c7a5c',
+  fixed: '#15803d',
+};
+
+const statusBg: Record<string, string> = {
+  reported: '#f0efec',
+  verified: '#e7fbec',
+  in_progress: '#e2ecf5',
+  fixed: '#dcf5e2',
 };
 
 const statuses = ['all', 'reported', 'verified', 'in_progress', 'fixed'];
-const categories = ['all', 'streetlight', 'garbage', 'road', 'water'];
+const categories = ['all', 'streetlight', 'garbage', 'road', 'water', 'other'];
 
 const categoryIcon: Record<string, string> = {
   streetlight: '💡',
   garbage: '🗑️',
   road: '🛣️',
   water: '💧',
+  other: '📍',
 };
 
 export default function AdminQueuePage() {
@@ -142,148 +150,312 @@ export default function AdminQueuePage() {
     return statusMatch && categoryMatch;
   });
 
-  const selectStyle = { border: '1px solid #dcdad5', borderRadius: 6, padding: '6px 10px', fontSize: 13, color: '#2b2b2b', background: '#fff' };
+  const selectStyle = {
+    border: '1px solid #dcdad5',
+    borderRadius: 6,
+    padding: '6px 10px',
+    fontSize: 13,
+    color: '#2b2b2b',
+    background: '#fff',
+    outline: 'none',
+  };
+
+  const total = reports.length;
+  const reportedCount = reports.filter((r) => r.status === 'reported').length;
+  const verifiedCount = reports.filter((r) => r.status === 'verified').length;
+  const inProgressCount = reports.filter((r) => r.status === 'in_progress').length;
+  const fixedCount = reports.filter((r) => r.status === 'fixed').length;
+
+  const categoryCounts = categories
+    .filter((c) => c !== 'all')
+    .map((c) => ({ key: c, count: reports.filter((r) => r.category === c).length }))
+    .sort((a, b) => b.count - a.count);
 
   return (
-    <div style={{ background: '#fbfbfa', minHeight: 'calc(100vh - 64px)' }}>
-      <div style={{ maxWidth: 800, margin: '0 auto', padding: '40px 24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+    <div style={{ background: '#fbfffc', minHeight: 'calc(100vh - 64px)' }}>
+      <style>{`
+        .status-pill:hover { background: #f0fdf4; }
+        .cat-pill-admin:hover { background: #f0fdf4; }
+        .logout-btn:hover { background: #fee2e2 !important; border-color: #fca5a5 !important; color: #b91c1c !important; }
+        .select-input:focus { border-color: #22c55e !important; box-shadow: 0 0 0 3px rgba(34,197,94,0.15); }
+        .cat-stat-row-admin:hover { background: #f7fdf8; }
+      `}</style>
+
+      <div style={{ padding: '40px 24px 0' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <h1 style={{ color: '#2b2b2b', fontSize: 28, fontWeight: 700, margin: '0 0 4px' }}>Reports queue</h1>
+            <h1
+              style={{
+                fontSize: 30,
+                fontWeight: 800,
+                margin: '0 0 4px',
+                background: 'linear-gradient(90deg, #16a34a, #15803d)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              Reports queue
+            </h1>
             <p style={{ color: '#6e6e6e', fontSize: 14, margin: 0 }}>
               {filtered.length} of {reports.length} reports · moderate, verify, and assign
             </p>
           </div>
           <button
             onClick={logout}
-            style={{ fontSize: 13, background: 'transparent', color: '#2b2b2b', border: '1px solid #dcdad5', borderRadius: 6, padding: '8px 14px', cursor: 'pointer' }}
+            className="logout-btn"
+            style={{
+              fontSize: 13,
+              background: 'transparent',
+              color: '#2b2b2b',
+              border: '1px solid #dcdad5',
+              borderRadius: 6,
+              padding: '8px 14px',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
           >
             Log out
           </button>
         </div>
+      </div>
 
-        <p style={{ fontSize: 12, fontWeight: 700, color: '#9a9a9a', textTransform: 'uppercase', letterSpacing: 0.5, margin: '0 0 8px' }}>Status</p>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-          {statuses.map((s) => (
-            <button
-              key={s}
-              onClick={() => setFilter(s)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: 999,
-                border: filter === s ? 'none' : '1px solid #dcdad5',
-                background: filter === s ? '#d4a017' : '#fff',
-                color: filter === s ? '#2b2b2b' : '#3d3d3d',
-                textTransform: 'capitalize',
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              {s.replace('_', ' ')}
-            </button>
-          ))}
-        </div>
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          padding: '24px 24px 56px',
+          display: 'flex',
+          gap: 28,
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+        }}
+      >
+        {/* Main column */}
+        <div style={{ flex: '1 1 620px', minWidth: 320 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#9a9a9a', textTransform: 'uppercase', letterSpacing: 0.5, margin: '0 0 8px' }}>Status</p>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            {statuses.map((s) => (
+              <button
+                key={s}
+                onClick={() => setFilter(s)}
+                className="status-pill"
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 999,
+                  border: filter === s ? 'none' : '1px solid #dcdad5',
+                  background: filter === s ? '#22c55e' : '#fff',
+                  color: filter === s ? '#ffffff' : '#3d3d3d',
+                  textTransform: 'capitalize',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {s.replace('_', ' ')}
+              </button>
+            ))}
+          </div>
 
-        <p style={{ fontSize: 12, fontWeight: 700, color: '#9a9a9a', textTransform: 'uppercase', letterSpacing: 0.5, margin: '0 0 8px' }}>Category</p>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
-          {categories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setCategoryFilter(c)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: 999,
-                border: categoryFilter === c ? 'none' : '1px solid #dcdad5',
-                background: categoryFilter === c ? '#2b2b2b' : '#fff',
-                color: categoryFilter === c ? '#fff' : '#3d3d3d',
-                textTransform: 'capitalize',
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              {c !== 'all' && categoryIcon[c]} {c}
-            </button>
-          ))}
-        </div>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#9a9a9a', textTransform: 'uppercase', letterSpacing: 0.5, margin: '0 0 8px' }}>Category</p>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+            {categories.map((c) => (
+              <button
+                key={c}
+                onClick={() => setCategoryFilter(c)}
+                className="cat-pill-admin"
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 999,
+                  border: categoryFilter === c ? 'none' : '1px solid #dcdad5',
+                  background: categoryFilter === c ? '#16a34a' : '#fff',
+                  color: categoryFilter === c ? '#fff' : '#3d3d3d',
+                  textTransform: 'capitalize',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {c !== 'all' && categoryIcon[c]} {c}
+              </button>
+            ))}
+          </div>
 
-        <div style={{ display: 'grid', gap: 12 }}>
-          {filtered.length === 0 && <p style={{ color: '#9a9a9a', fontSize: 14 }}>No reports match these filters.</p>}
-          {filtered.map((r) => (
-            <div key={r.id} style={{ background: '#fff', border: '1px solid #dcdad5', borderRadius: 10, padding: 18 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: 22, lineHeight: 1 }}>{categoryIcon[r.category] || '📍'}</span>
-                  <div>
-                    <p style={{ fontWeight: 700, color: '#2b2b2b', margin: '0 0 4px', fontSize: 16 }}>{r.title}</p>
-                    {r.confirmCount !== undefined && (
-                      <p style={{ fontSize: 12, color: '#9a9a9a', margin: 0 }}>
-                        {r.confirmCount} {r.confirmCount === 1 ? 'confirmation' : 'confirmations'}
-                      </p>
-                    )}
+          <div style={{ display: 'grid', gap: 12 }}>
+            {filtered.length === 0 && <p style={{ color: '#9a9a9a', fontSize: 14 }}>No reports match these filters.</p>}
+            {filtered.map((r) => (
+              <div key={r.id} style={{ background: '#fff', border: '1px solid #dcdad5', borderRadius: 10, padding: 18 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                    <span style={{ fontSize: 22, lineHeight: 1 }}>{categoryIcon[r.category] || '📍'}</span>
+                    <div>
+                      <p style={{ fontWeight: 700, color: '#2b2b2b', margin: '0 0 4px', fontSize: 16 }}>{r.title}</p>
+                      {r.confirmCount !== undefined && (
+                        <p style={{ fontSize: 12, color: '#9a9a9a', margin: 0 }}>
+                          {r.confirmCount} {r.confirmCount === 1 ? 'confirmation' : 'confirmations'}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    color: statusColor[r.status] || '#6e6e6e',
-                    letterSpacing: 0.4,
-                    whiteSpace: 'nowrap',
-                    background: '#f5f4f1',
-                    padding: '4px 10px',
-                    borderRadius: 999,
-                  }}
-                >
-                  {r.status.replace('_', ' ')}
-                </span>
-              </div>
-
-              <p style={{ fontSize: 14, color: '#3d3d3d', margin: '0 0 14px' }}>{r.description}</p>
-
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                <div>
-                  <label style={{ fontSize: 11, color: '#9a9a9a', display: 'block', marginBottom: 3 }}>Status</label>
-                  <select value={r.status} onChange={(e) => updateStatus(r.id, e.target.value)} style={selectStyle}>
-                    <option value="reported">Reported</option>
-                    <option value="verified">Verified</option>
-                    <option value="in_progress">In progress</option>
-                    <option value="fixed">Fixed</option>
-                  </select>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      color: statusColor[r.status] || '#6e6e6e',
+                      letterSpacing: 0.4,
+                      whiteSpace: 'nowrap',
+                      background: statusBg[r.status] || '#f5f4f1',
+                      padding: '4px 10px',
+                      borderRadius: 999,
+                    }}
+                  >
+                    {r.status.replace('_', ' ')}
+                  </span>
                 </div>
 
-                <div>
-                  <label style={{ fontSize: 11, color: '#9a9a9a', display: 'block', marginBottom: 3 }}>Category</label>
-                  <select value={r.category} onChange={(e) => updateCategory(r.id, e.target.value)} style={selectStyle}>
-                    <option value="streetlight">Streetlight</option>
-                    <option value="garbage">Garbage</option>
-                    <option value="road">Road</option>
-                    <option value="water">Water leak</option>
-                  </select>
-                </div>
+                <p style={{ fontSize: 14, color: '#3d3d3d', margin: '0 0 14px' }}>{r.description}</p>
 
-                {r.status === 'verified' && (
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
                   <div>
-                    <label style={{ fontSize: 11, color: '#9a9a9a', display: 'block', marginBottom: 3 }}>Assign to</label>
+                    <label style={{ fontSize: 11, color: '#9a9a9a', display: 'block', marginBottom: 3 }}>Status</label>
                     <select
-                      defaultValue=""
-                      onChange={(e) => assignTechnician(r.id, Number(e.target.value))}
+                      className="select-input"
+                      value={r.status}
+                      onChange={(e) => updateStatus(r.id, e.target.value)}
                       style={selectStyle}
                     >
-                      <option value="" disabled>Choose technician...</option>
-                      {technicians.map((t) => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
-                      ))}
+                      <option value="reported">Reported</option>
+                      <option value="verified">Verified</option>
+                      <option value="in_progress">In progress</option>
+                      <option value="fixed">Fixed</option>
                     </select>
                   </div>
+
+                  <div>
+                    <label style={{ fontSize: 11, color: '#9a9a9a', display: 'block', marginBottom: 3 }}>Category</label>
+                    <select
+                      className="select-input"
+                      value={r.category}
+                      onChange={(e) => updateCategory(r.id, e.target.value)}
+                      style={selectStyle}
+                    >
+                      <option value="streetlight">Streetlight</option>
+                      <option value="garbage">Garbage</option>
+                      <option value="road">Road</option>
+                      <option value="water">Water leak</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  {r.status === 'verified' && (
+                    <div>
+                      <label style={{ fontSize: 11, color: '#9a9a9a', display: 'block', marginBottom: 3 }}>Assign to</label>
+                      <select
+                        className="select-input"
+                        defaultValue=""
+                        onChange={(e) => assignTechnician(r.id, Number(e.target.value))}
+                        style={selectStyle}
+                      >
+                        <option value="" disabled>Choose technician...</option>
+                        {technicians.map((t) => (
+                          <option key={t.id} value={t.id}>{t.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {assignMsg[r.id] && (
+                  <p style={{ fontSize: 12, color: '#16a34a', fontWeight: 600, marginTop: 10 }}>{assignMsg[r.id]}</p>
                 )}
               </div>
+            ))}
+          </div>
+        </div>
 
-              {assignMsg[r.id] && <p style={{ fontSize: 12, color: '#5c7a5c', marginTop: 10 }}>{assignMsg[r.id]}</p>}
+        {/* Sidebar */}
+        <div style={{ flex: '1 1 300px', minWidth: 280, display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div style={{ background: '#fff', border: '1px solid #dcdad5', borderRadius: 10, overflow: 'hidden' }}>
+            <div style={{ padding: '10px 16px', background: '#e7fbec', borderBottom: '1px solid #bdf0ca' }}>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: 0.4 }}>
+                Queue overview
+              </p>
             </div>
-          ))}
+            <div style={{ padding: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div>
+                <p style={{ fontSize: 22, fontWeight: 800, color: '#16a34a', margin: 0 }}>{total}</p>
+                <p style={{ fontSize: 12, color: '#6e6e6e', margin: 0 }}>Total</p>
+              </div>
+              <div>
+                <p style={{ fontSize: 22, fontWeight: 800, color: '#9a9a9a', margin: 0 }}>{reportedCount}</p>
+                <p style={{ fontSize: 12, color: '#6e6e6e', margin: 0 }}>Reported</p>
+              </div>
+              <div>
+                <p style={{ fontSize: 22, fontWeight: 800, color: '#16a34a', margin: 0 }}>{verifiedCount}</p>
+                <p style={{ fontSize: 12, color: '#6e6e6e', margin: 0 }}>Verified</p>
+              </div>
+              <div>
+                <p style={{ fontSize: 22, fontWeight: 800, color: '#2f6fa8', margin: 0 }}>{inProgressCount}</p>
+                <p style={{ fontSize: 12, color: '#6e6e6e', margin: 0 }}>In progress</p>
+              </div>
+              <div>
+                <p style={{ fontSize: 22, fontWeight: 800, color: '#15803d', margin: 0 }}>{fixedCount}</p>
+                <p style={{ fontSize: 12, color: '#6e6e6e', margin: 0 }}>Fixed</p>
+              </div>
+              <div>
+                <p style={{ fontSize: 22, fontWeight: 800, color: '#2b2b2b', margin: 0 }}>{technicians.length}</p>
+                <p style={{ fontSize: 12, color: '#6e6e6e', margin: 0 }}>Technicians</p>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: '#fff', border: '1px solid #dcdad5', borderRadius: 10, padding: 18 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: '#2b2b2b', margin: '0 0 12px' }}>
+              By category
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {categoryCounts.map(({ key, count }) => {
+                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                return (
+                  <div
+                    key={key}
+                    className="cat-stat-row-admin"
+                    onClick={() => setCategoryFilter(key)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '8px 6px',
+                      borderRadius: 6,
+                      cursor: 'pointer',
+                      transition: 'background 0.15s ease',
+                    }}
+                  >
+                    <span style={{ fontSize: 14, width: 20 }}>{categoryIcon[key]}</span>
+                    <span style={{ fontSize: 13, color: '#3d3d3d', textTransform: 'capitalize', flex: 1 }}>{key}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#16a34a' }}>{count}</span>
+                    <div style={{ width: 50, height: 6, background: '#f0fdf4', borderRadius: 999, overflow: 'hidden' }}>
+                      <div style={{ width: `${pct}%`, height: '100%', background: '#22c55e' }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {reportedCount > 0 && (
+            <div style={{ background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 10, padding: 18 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', margin: '0 0 6px' }}>
+                ⏳ Needs attention
+              </p>
+              <p style={{ fontSize: 12, color: '#78350f', margin: 0, lineHeight: 1.5 }}>
+                {reportedCount} {reportedCount === 1 ? 'report is' : 'reports are'} still unverified.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
