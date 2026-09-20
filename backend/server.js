@@ -25,8 +25,13 @@ const officerScheduleRoutes = require('./routes/officerschedule');
 const InfoItem = require('./models/InfoItem');
 const infoItemRoutes = require('./routes/infoitems');
 
-sequelize.sync({ alter: true })
-  .then(() => console.log('Database synced — tables ready'))
+// Only alter table structure when explicitly requested (e.g. `DB_ALTER=true npm run dev`).
+// Plain sync() creates missing tables but never touches existing ones — this is what
+// prevents nodemon restarts from repeatedly re-adding unique indexes/constraints.
+const shouldAlter = process.env.DB_ALTER === 'true';
+
+sequelize.sync({ alter: shouldAlter })
+  .then(() => console.log(`Database synced — tables ready${shouldAlter ? ' (schema altered)' : ''}`))
   .catch((err) => console.error('Sync failed:', err));
 
 const app = express();
