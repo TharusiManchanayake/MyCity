@@ -89,6 +89,8 @@ export default function Navbar() {
             <Link href="/admin/assets" style={linkStyle('/admin/assets')} className="nav-link">Assets</Link>
             <Link href="/admin/budgets" style={linkStyle('/admin/budgets')} className="nav-link">Budgets</Link>
             <Link href="/admin/council-info" style={linkStyle('/admin/council-info')} className="nav-link">Council info</Link>
+            <Link href="/admin/wards" style={linkStyle('/admin/wards')} className="nav-link">Wards</Link>
+
           </>
         )}
 
