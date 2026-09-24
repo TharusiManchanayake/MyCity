@@ -1,5 +1,4 @@
-
- 'use client';
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -90,7 +89,6 @@ export default function Navbar() {
             <Link href="/admin/budgets" style={linkStyle('/admin/budgets')} className="nav-link">Budgets</Link>
             <Link href="/admin/council-info" style={linkStyle('/admin/council-info')} className="nav-link">Council info</Link>
             <Link href="/admin/wards" style={linkStyle('/admin/wards')} className="nav-link">Wards</Link>
-
           </>
         )}
 
@@ -100,6 +98,8 @@ export default function Navbar() {
       </div>
 
       <div style={{ marginLeft: 'auto', display: 'flex', gap: 16, alignItems: 'center' }}>
+        <div id="google_translate_element" />
+
         {user ? (
           <>
             <div
