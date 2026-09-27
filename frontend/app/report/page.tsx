@@ -93,7 +93,7 @@ export default function ReportPage() {
       formData.append('longitude', longitude.toString());
       if (photo) formData.append('photo', photo);
 
-      const res = await fetch('http://localhost:5000/api/reports', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/reports`, {
         method: 'POST',
         body: formData,
       });

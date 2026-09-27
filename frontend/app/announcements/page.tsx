@@ -55,7 +55,7 @@ export default function AnnouncementsPage() {
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/announcements')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/announcements`)
       .then((res) => res.json())
       .then((data) => {
         setAnnouncements(Array.isArray(data) ? data : []);

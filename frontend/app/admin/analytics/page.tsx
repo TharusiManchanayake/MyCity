@@ -35,7 +35,7 @@ export default function AnalyticsPage() {
     }
 
     const token = localStorage.getItem('token');
-    fetch('http://localhost:5000/api/stats', {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/stats`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

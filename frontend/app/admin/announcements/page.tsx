@@ -43,7 +43,7 @@ export default function AdminAnnouncementsPage() {
   const router = useRouter();
 
   const loadAnnouncements = () => {
-    fetch('http://localhost:5000/api/announcements')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/announcements`)
       .then((res) => res.json())
       .then((data) => {
         setAnnouncements(Array.isArray(data) ? data : []);
@@ -64,7 +64,7 @@ export default function AdminAnnouncementsPage() {
     e.preventDefault();
     const token = localStorage.getItem('token');
 
-    const res = await fetch('http://localhost:5000/api/announcements', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/announcements`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export default function AdminAnnouncementsPage() {
 
   const handleDelete = async (id: number) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/announcements/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/announcements/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });

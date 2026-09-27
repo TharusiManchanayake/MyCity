@@ -19,7 +19,7 @@ export default function AdminWardsPage() {
   const router = useRouter();
 
   const loadWards = () => {
-    fetch('http://localhost:5000/api/wards')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/wards`)
       .then((res) => res.json())
       .then((data) => {
         setWards(Array.isArray(data) ? data : []);
@@ -40,7 +40,7 @@ export default function AdminWardsPage() {
     e.preventDefault();
     const token = localStorage.getItem('token');
 
-    const res = await fetch('http://localhost:5000/api/wards', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/wards`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export default function AdminWardsPage() {
 
   const deleteWard = async (id: number) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/wards/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/wards/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });

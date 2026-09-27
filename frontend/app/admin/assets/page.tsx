@@ -50,7 +50,7 @@ export default function AdminAssetsPage() {
   const router = useRouter();
 
   const loadAssets = () => {
-    fetch('http://localhost:5000/api/assets')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/assets`)
       .then((res) => res.json())
       .then((data) => {
         setAssets(Array.isArray(data) ? data : []);
@@ -75,7 +75,7 @@ export default function AdminAssetsPage() {
     }
 
     const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:5000/api/assets', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/assets`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ export default function AdminAssetsPage() {
 
   const updateCondition = async (id: number, condition: string) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/assets/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/assets/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ export default function AdminAssetsPage() {
 
   const deleteAsset = async (id: number) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/assets/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/assets/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });

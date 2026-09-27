@@ -62,8 +62,8 @@ export default function AdminQueuePage() {
     const token = localStorage.getItem('token');
 
     Promise.all([
-      fetch('http://localhost:5000/api/reports').then((res) => res.json()),
-      fetch('http://localhost:5000/api/auth/technicians', {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/reports`).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/auth/technicians`, {
         headers: { Authorization: `Bearer ${token}` },
       }).then((res) => res.json()),
     ]).then(([reportsData, techData]) => {
@@ -76,7 +76,7 @@ export default function AdminQueuePage() {
   const updateStatus = async (id: number, status: string) => {
     const token = localStorage.getItem('token');
 
-    const res = await fetch(`http://localhost:5000/api/reports/${id}/status`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/reports/${id}/status`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ export default function AdminQueuePage() {
   const updateCategory = async (id: number, category: string) => {
     const token = localStorage.getItem('token');
 
-    const res = await fetch(`http://localhost:5000/api/reports/${id}/category`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/reports/${id}/category`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ export default function AdminQueuePage() {
     if (!assignedToId) return;
     const token = localStorage.getItem('token');
 
-    const res = await fetch('http://localhost:5000/api/workorders', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/workorders`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

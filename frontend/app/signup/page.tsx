@@ -19,7 +19,7 @@ export default function SignupPage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/wards')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/wards`)
       .then((res) => res.json())
       .then((data) => setWards(Array.isArray(data) ? data : []))
       .catch(() => setWards([]));
@@ -30,7 +30,7 @@ export default function SignupPage() {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/signup', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -49,7 +49,7 @@ export default function SignupPage() {
         return;
       }
 
-      const loginRes = await fetch('http://localhost:5000/api/auth/login', {
+      const loginRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

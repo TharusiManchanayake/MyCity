@@ -15,7 +15,7 @@ export default function CouncilInfoPage() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/info-items')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/info-items`)
       .then((res) => res.json())
       .then((data) => {
         setItems(Array.isArray(data) ? data : []);

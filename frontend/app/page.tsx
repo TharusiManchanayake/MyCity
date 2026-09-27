@@ -43,7 +43,7 @@ export default function HomePage() {
   const [reports, setReports] = useState<Report[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/reports')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/reports`)
       .then((res) => res.json())
       .then((data) => setReports(Array.isArray(data) ? data : []))
       .catch(() => setReports([]));

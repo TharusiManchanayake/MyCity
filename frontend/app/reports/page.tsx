@@ -60,7 +60,7 @@ export default function ReportsPage() {
   }, []);
 
   const loadReports = () => {
-    fetch('http://localhost:5000/api/reports')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/reports`)
       .then((res) => res.json())
       .then((data) => {
         setReports(data);
@@ -80,7 +80,7 @@ export default function ReportsPage() {
       return;
     }
 
-    const res = await fetch(`http://localhost:5000/api/reports/${id}/confirm`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/reports/${id}/confirm`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     });

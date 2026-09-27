@@ -19,7 +19,7 @@ export default function AdminCouncilInfoPage() {
   const router = useRouter();
 
   const loadItems = () => {
-    fetch('http://localhost:5000/api/info-items')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/info-items`)
       .then((res) => res.json())
       .then((data) => {
         setItems(Array.isArray(data) ? data : []);
@@ -39,7 +39,7 @@ export default function AdminCouncilInfoPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:5000/api/info-items', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/info-items`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export default function AdminCouncilInfoPage() {
 
   const handleDelete = async (id: number) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/info-items/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/info-items/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });

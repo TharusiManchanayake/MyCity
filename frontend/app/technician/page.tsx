@@ -56,7 +56,7 @@ export default function TechnicianPage() {
     }
 
     const token = localStorage.getItem('token');
-    fetch('http://localhost:5000/api/workorders/mine', {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/workorders/mine`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -92,7 +92,7 @@ export default function TechnicianPage() {
     const { reportId, workOrderId } = modalTarget;
     const token = localStorage.getItem('token');
 
-    const statusRes = await fetch(`http://localhost:5000/api/reports/${reportId}/status`, {
+    const statusRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/reports/${reportId}/status`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ export default function TechnicianPage() {
       body: JSON.stringify({ status: 'fixed' }),
     });
 
-    const costRes = await fetch(`http://localhost:5000/api/workorders/${workOrderId}/cost`, {
+    const costRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/workorders/${workOrderId}/cost`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
